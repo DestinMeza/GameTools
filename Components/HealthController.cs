@@ -23,7 +23,6 @@ namespace GameTools.Components
         bool invulnerble = false;
 
         void OnEnable(){
-            if(GetComponent<PlayerController>()) PlayerController.onBarrelRoll += Invulnerble;
             health = maxHealth;
             onHealthIncrease();
         }
