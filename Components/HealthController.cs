@@ -20,6 +20,7 @@ namespace GameTools.Components
         public int health;
         public int scoreValue = 5;
         public bool projectScore = false;
+        public bool onDeathSetInactive = true;
         bool invulnerble = false;
 
         void OnEnable(){
@@ -42,6 +43,7 @@ namespace GameTools.Components
                 health = 0;
                 onDeath(this);
                 if(projectScore) onIncreaseScore(scoreValue);
+                if(onDeathSetInactive) gameObject.SetActive(false);
             }
         }
 
