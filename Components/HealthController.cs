@@ -9,6 +9,8 @@ namespace GameTools.Components
 
         public delegate void OnIncreaseScore(int score);
         public static event OnIncreaseScore onIncreaseScore = delegate{};
+        public delegate void OnAnyDeath(HealthController health);
+        public static OnAnyDeath onAnyDeath =delegate {};
         public delegate void OnDeath(HealthController health);
         public OnDeath onDeath = delegate {};
         public delegate void OnHealthIncrease();
