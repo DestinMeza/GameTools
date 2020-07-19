@@ -23,11 +23,14 @@ namespace GameTools.Components
         public int scoreValue = 5;
         public bool projectScore = false;
         public bool onDeathSetInactive = true;
-        bool invulnerble = false;
+        public bool healOnEnable = true;
+        public bool invulnerble = false;
 
         void OnEnable(){
-            health = maxHealth;
-            onHealthIncrease();
+            if(healOnEnable){
+                health = maxHealth;
+                onHealthIncrease();
+            }
         }
 
         public bool isAlive(){
@@ -43,9 +46,10 @@ namespace GameTools.Components
             Debug.Log(gameObject.name + "Took Damage");
             if(health <= 0){
                 health = 0;
-                onDeath(this);
-                if(projectScore) onIncreaseScore(scoreValue);
                 if(onDeathSetInactive) gameObject.SetActive(false);
+                if(projectScore) onIncreaseScore(scoreValue);
+                onDeath(this);
+                onAnyDeath(this);
             }
         }
 
@@ -57,10 +61,6 @@ namespace GameTools.Components
                 this.health += health;
             }
             onHealthIncrease();
-        }
-
-        void Invulnerble(bool invulnerble){
-            this.invulnerble = invulnerble;
         }
 
     }
