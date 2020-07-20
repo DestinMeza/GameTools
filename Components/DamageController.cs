@@ -6,6 +6,9 @@ namespace GameTools.Components
 {
     public class DamageController : MonoBehaviour
     {
+        public delegate void OnHit(Transform t);
+        public OnHit onHit = delegate {};
+
         public string hitSound = "";
         public string hitParticles = "";
         int defaultDmg;
@@ -38,7 +41,8 @@ namespace GameTools.Components
         void Hit(GameObject g){
             HealthController h = g.GetComponentInParent<HealthController>();
             if(h == null) return;
-            h.TakeDamage(damage);    
+            onHit(g.transform);
+            h.TakeDamage(damage);
         }
     }
 }
