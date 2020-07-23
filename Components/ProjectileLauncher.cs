@@ -42,7 +42,7 @@ namespace GameTools.Components
 
                 if(Time.time - lastShotTime > fireRate){
                     GameObject bullet = SpawnManager.Spawn(bulletName, transform.position);
-                    Projectile bulletBody = bullet.GetComponentInParent<Projectile>();
+                    Projectile bulletBody = bullet.GetComponent<Projectile>();
                     if(bulletBody != null){
                         bullet.SetActive(true);
                         lastShotTime = Time.time;

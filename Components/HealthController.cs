@@ -18,6 +18,8 @@ namespace GameTools.Components
         public delegate void OnHealthDecrease();
         public OnHealthDecrease onHealthDecrease = delegate {};
 
+        public float regenTick = 1;
+        public int regenAmount = 1; 
         public int maxHealth = 3;
         public int health;
         public int scoreValue = 5;
@@ -25,6 +27,8 @@ namespace GameTools.Components
         public bool onDeathSetInactive = true;
         public bool healOnEnable = true;
         public bool invulnerble = false;
+        public bool useRegen = true;
+        bool regenerating = false;
 
         void OnEnable(){
             if(healOnEnable){
@@ -51,6 +55,7 @@ namespace GameTools.Components
                 onDeath(this);
                 onAnyDeath(this);
             }
+            if(!regenerating && useRegen) StartCoroutine(HealthRegen());
         }
 
         public void IncreaseHeath(int health){
@@ -63,5 +68,15 @@ namespace GameTools.Components
             onHealthIncrease();
         }
 
+        IEnumerator HealthRegen(){
+            regenerating = true;
+            while(regenerating){
+                yield return new WaitForSeconds(regenTick);
+                if(health >= maxHealth) regenerating = false;
+                else{
+                    health += regenAmount;
+                }
+            }            
+        }
     }
 }
