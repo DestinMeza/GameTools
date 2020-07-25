@@ -30,7 +30,7 @@ namespace GameTools.Components
         public bool invulnerble = false;
         public bool useRegen = true;
         bool regenerating = false;
-
+        float lastHitTime = -1;
         void OnEnable(){
             if(healOnEnable){
                 health = maxHealth;
@@ -47,6 +47,7 @@ namespace GameTools.Components
         public void TakeDamage(int damage){
             if(invulnerble) return;
             health -= damage;
+            lastHitTime = Time.time;
             onHealthDecrease();
             Debug.Log(gameObject.name + "Took Damage");
             if(health <= 0){
@@ -71,7 +72,10 @@ namespace GameTools.Components
 
         IEnumerator HealthRegen(){
             regenerating = true;
-            yield return new WaitForSeconds(regenDelay);
+            while(Time.time - lastHitTime < regenDelay){
+                yield return new WaitForEndOfFrame();
+                Debug.Log("");
+            }
             while(regenerating){
                 yield return new WaitForSeconds(regenTick);
                 if(health >= maxHealth) regenerating = false;
