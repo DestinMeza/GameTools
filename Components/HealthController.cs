@@ -19,6 +19,7 @@ namespace GameTools.Components
         public OnHealthDecrease onHealthDecrease = delegate {};
 
         public float regenTick = 1;
+        public float regenDelay = 2;
         public int regenAmount = 1; 
         public int maxHealth = 3;
         public int health;
@@ -70,6 +71,7 @@ namespace GameTools.Components
 
         IEnumerator HealthRegen(){
             regenerating = true;
+            yield return new WaitForSeconds(regenDelay);
             while(regenerating){
                 yield return new WaitForSeconds(regenTick);
                 if(health >= maxHealth) regenerating = false;
