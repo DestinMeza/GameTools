@@ -17,7 +17,6 @@ namespace GameTools.Components
         public OnHealthIncrease onHealthIncrease = delegate {};
         public delegate void OnHealthDecrease();
         public OnHealthDecrease onHealthDecrease = delegate {};
-
         public float regenTick = 1;
         public float regenDelay = 2;
         public int regenAmount = 1; 
@@ -30,7 +29,9 @@ namespace GameTools.Components
         public bool invulnerble = false;
         public bool useRegen = true;
         bool regenerating = false;
+        bool addLife = false;
         float lastHitTime = -1;
+        float lastTickTime = -1;
         void OnEnable(){
             if(healOnEnable){
                 health = maxHealth;
@@ -44,6 +45,29 @@ namespace GameTools.Components
         public int GetHealth(){
             return health;
         }
+
+        void Update(){
+            if(regenerating && useRegen){
+                
+                if(Time.time - lastTickTime <= regenTick){
+                    addLife = true;
+                }
+                
+                if(addLife){
+                    if(Time.time - lastHitTime <= regenDelay){
+                        float timer = Time.time - lastHitTime;
+                        Debug.Log(gameObject.name + " : " + (timer).ToString());
+                    }
+                    if(health >= maxHealth) regenerating = false;
+                    else{
+                        health += regenAmount;
+                    }
+                    addLife = false;
+                }
+                
+            }
+        }
+
         public void TakeDamage(int damage){
             if(invulnerble) return;
             health -= damage;
@@ -57,7 +81,7 @@ namespace GameTools.Components
                 onDeath(this);
                 onAnyDeath(this);
             }
-            if(!regenerating && useRegen) StartCoroutine(HealthRegen());
+            if(!regenerating && useRegen) regenerating = true;
         }
 
         public void IncreaseHeath(int health){
@@ -68,21 +92,6 @@ namespace GameTools.Components
                 this.health += health;
             }
             onHealthIncrease();
-        }
-
-        IEnumerator HealthRegen(){
-            regenerating = true;
-            while(Time.time - lastHitTime < regenDelay){
-                yield return new WaitForEndOfFrame();
-                Debug.Log("");
-            }
-            while(regenerating){
-                yield return new WaitForSeconds(regenTick);
-                if(health >= maxHealth) regenerating = false;
-                else{
-                    health += regenAmount;
-                }
-            }            
         }
     }
 }
