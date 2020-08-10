@@ -4,6 +4,7 @@ using UnityEngine;
 using GameTools.Components;
 public class KnockbackController : MonoBehaviour
 {
+    public LayerMask hazards;
     HealthController health;
     public float knockbackStrength;
     public bool usePercentScale = false;
@@ -22,12 +23,12 @@ public class KnockbackController : MonoBehaviour
     //     health.onKnockBack -= Knockback;
     // }
 
-    public void Knockback(Transform t){
-        Vector3 knockBackDir = t.position - transform.position;
+    public void Knockback(Vector3 hitDir){
+        Vector3 knockBackDir = hitDir - transform.position;
         if(usePercentScale) healthScale = health.maxHealth/health.health;
-        rb.AddForce(knockBackDir.normalized * knockbackStrength * healthScale * Physics.gravity.magnitude * rb.mass * -1, ForceMode.Force);
+        rb.AddForce((knockBackDir.normalized * knockbackStrength * healthScale * Physics.gravity.magnitude * rb.mass) * -1, ForceMode.Force);
     }
-    public void Knockback(Vector3 contactPoint){
+    void HazardKnockback(Vector3 contactPoint){
         Vector3 knockBackDir = contactPoint - transform.position;
         if(usePercentScale) healthScale = health.maxHealth/health.health;
         rb.AddForce((knockBackDir.normalized * knockbackStrength * healthScale * Physics.gravity.magnitude * rb.mass) * -1, ForceMode.Force);
@@ -36,11 +37,12 @@ public class KnockbackController : MonoBehaviour
     void OnCollisionEnter(Collision col){
         Vector3 closestPoint = new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
         for(int i = 0; i < col.contacts.Length; i++){
-            if(col.contacts[i].point.magnitude < closestPoint.magnitude && col.gameObject.GetComponent<DamageController>()){
+            if(col.contacts[i].point.magnitude < closestPoint.magnitude && col.gameObject.GetComponent<DamageController>() && ((1<<col.gameObject.layer) & hazards) != 0){
                 closestPoint = col.contacts[i].point;
+                Debug.Log(col.gameObject.layer + " " + hazards.value);
             }
         }
         if(closestPoint.magnitude > 5) return;
-        Knockback(closestPoint);
+        HazardKnockback(closestPoint);
     }
 }
