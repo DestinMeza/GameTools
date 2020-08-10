@@ -8,11 +8,10 @@ namespace GameTools.Components
     {
         public delegate void OnHit(Transform t);
         public OnHit onHit = delegate {};
-
         public string hitSound = "";
         public string hitParticles = "";
-        int defaultDmg;
-        public int damage = 1;
+        float defaultDmg;
+        public float damage = 1;
 
         void Awake(){
             defaultDmg = damage;
@@ -42,7 +41,7 @@ namespace GameTools.Components
             HealthController h = g.GetComponentInParent<HealthController>();
             if(h == null) return;
             onHit(g.transform);
-            h.TakeDamage(damage);
+            h.TakeDamage(damage, gameObject.transform);
         }
     }
 }

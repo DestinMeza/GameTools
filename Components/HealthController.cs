@@ -15,19 +15,23 @@ namespace GameTools.Components
         public OnDeath onDeath = delegate {};
         public delegate void OnHealthIncrease();
         public OnHealthIncrease onHealthIncrease = delegate {};
+        public delegate void OnKnockBack(Transform t);
+        public OnKnockBack onKnockBack = delegate {};
         public delegate void OnHealthDecrease();
         public OnHealthDecrease onHealthDecrease = delegate {};
         public float regenTick = 1;
         public float regenDelay = 2;
-        public int regenAmount = 1; 
-        public int maxHealth = 3;
-        public int health;
+        public float regenAmount = 1; 
+        public float maxHealth = 3;
+        public float health;
+        public float recoveryWindow = 0.2f;
         public int scoreValue = 5;
         public bool projectScore = false;
         public bool onDeathSetInactive = true;
         public bool healOnEnable = true;
         public bool invulnerble = false;
         public bool useRegen = true;
+        public bool useRecovery = true;
         bool regenerating = false;
         bool addLife = false;
         float lastHitTime = -1;
@@ -42,7 +46,7 @@ namespace GameTools.Components
         public bool isAlive(){
             return health > 0;
         }
-        public int GetHealth(){
+        public float GetHealth(){
             return health;
         }
 
@@ -68,8 +72,8 @@ namespace GameTools.Components
             }
         }
 
-        public void TakeDamage(int damage){
-            if(invulnerble) return;
+        public void TakeDamage(float damage, Transform t){
+            if(invulnerble && Time.time - lastHitTime < recoveryWindow) return;
             health -= damage;
             lastHitTime = Time.time;
             onHealthDecrease();
@@ -81,10 +85,11 @@ namespace GameTools.Components
                 onDeath(this);
                 onAnyDeath(this);
             }
+            if(health > 0)onKnockBack(t);
             if(!regenerating && useRegen) regenerating = true;
         }
 
-        public void IncreaseHeath(int health){
+        public void IncreaseHeath(float health){
             if(this.health + health >= maxHealth){
                 this.health = maxHealth;
             }
