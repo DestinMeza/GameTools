@@ -1,0 +1,48 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+
+namespace GameTools.Editor{
+    public class TextureWizard : ScriptableWizard{
+
+        public float width = 1024;
+        public float height = 1024;
+        public float offset;
+        Texture2D texture;
+        Color[] colors;
+
+        [MenuItem("Assets/Texture/PerlinNoise")]
+        public static void CreateWizard(){
+            ScriptableWizard.DisplayWizard<WizardCreateLight>("Create Texture", "Create");
+        }
+
+        void OnWizardCreate(){
+            byte[] bytes = texture.EncodeToPNG();
+            string path = EditorUtility.SaveFilePanelInProject("Save png", texture.name + "png", "png", "Saving File");
+            if (bytes != null)
+            {
+                File.WriteAllBytes(path, bytes);
+                AssetDatabase.Refresh();
+            }
+        }
+
+        void OnWizardUpdate(){
+            if(texture == null || texture.height != height || texture.width != width){
+                texture = new Texture2D(width, height);
+                colors = new colors[width*height];
+                UpdateTexture();
+            }
+        }
+
+        void UpdateTexture(){
+            for(int rows = 0; rows < height; rows++){
+                for(int columns = 0; columns < width; columns++){
+                    colors[row * width + columns] = Mathf.PerlinNoise(rows + offset, columns + offset);
+                }
+            }
+            texture.SetPixel(colors);
+            texture.Apply();
+        }
+    }
+}
