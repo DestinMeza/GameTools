@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 namespace GameTools.Editor{
-    public class TextureWizard : ScriptableWizard{
+    public class TextureGenerator : ScriptableWizard{
 
         public float width = 1024;
         public float height = 1024;
