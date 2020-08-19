@@ -13,11 +13,11 @@ namespace GameTools.Components
         public static OnAnyDeath onAnyDeath =delegate {};
         public delegate void OnDeath(HealthController health);
         public OnDeath onDeath = delegate {};
-        public delegate void OnHealthIncrease();
+        public delegate void OnHealthIncrease(float health, float maxHealth);
         public OnHealthIncrease onHealthIncrease = delegate {};
         public delegate void OnKnockBack(Transform t);
         public OnKnockBack onKnockBack = delegate {};
-        public delegate void OnHealthDecrease();
+        public delegate void OnHealthDecrease(float health, float maxHealth);
         public OnHealthDecrease onHealthDecrease = delegate {};
         public float regenTick = 1;
         public float regenDelay = 2;
@@ -39,7 +39,7 @@ namespace GameTools.Components
         void OnEnable(){
             if(healOnEnable){
                 health = maxHealth;
-                onHealthIncrease();
+                onHealthIncrease(health, maxHealth);
             }
         }
 
@@ -76,7 +76,7 @@ namespace GameTools.Components
             if(invulnerble && Time.time - lastHitTime < recoveryWindow) return;
             health -= damage;
             lastHitTime = Time.time;
-            onHealthDecrease();
+            onHealthDecrease(health, maxHealth);
             Debug.Log(gameObject.name + "Took Damage");
             if(health <= 0){
                 health = 0;
@@ -96,7 +96,7 @@ namespace GameTools.Components
             else{
                 this.health += health;
             }
-            onHealthIncrease();
+            onHealthIncrease(health, maxHealth);
         }
     }
 }
